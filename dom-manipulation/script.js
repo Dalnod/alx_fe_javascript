@@ -112,7 +112,17 @@ const addQuote = () => {
   let newQuoteObject = {text, category};
 
   quotes.push(newQuoteObject)
-  
   console.log(quotes)
-
 }
+
+const createAddQuoteForm = document.getElementById('newQuoteForm');
+
+
+createAddQuoteForm.addEventListener('click', function () {
+  const addForm= document.getElementById('add-quote');
+  if (addForm.style.display === "none") {
+    return addForm.style.display = "block"
+  } else {
+    return addForm.style.display = "none"
+  }
+})

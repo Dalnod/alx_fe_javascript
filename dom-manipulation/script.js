@@ -1,4 +1,23 @@
 const quotes = [
+  // Humorous Quotes
+  {
+    text: "I told my wife she was drawing her eyebrows too high. She looked surprised.",
+    category: "humorous"
+  },
+  {
+    text: "Why don't scientists trust atoms? Because they make up everything!",
+    category: "humorous"
+  },
+  {
+    text: "I used to be a baker, but I couldn't make enough dough.",
+    category: "humorous"
+  },
+  {
+    text: "Parallel lines have so much in common... it’s a shame they’ll never meet.",
+    category: "humorous"
+  },
+
+  // Inspirational Quotes
   {
     text: "The most difficult thing is the decision to act; the rest is merely tenacity.",
     category: "inspirational"
@@ -8,11 +27,29 @@ const quotes = [
     category: "inspirational"
   },
   {
-    text: "Be the change that you wish to see in the world.",
-    category: "humorous"
+    text: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+    category: "inspirational"
   },
   {
-    text: "Don't sit down and wait for the opportunities to come. Get up and make them.",
+    text: "Believe you can and you're halfway there.",
+    category: "inspirational"
+  },
+
+  // Philosophical Quotes
+  {
+    text: "The unexamined life is not worth living.",
+    category: "philosophical"
+  },
+  {
+    text: "We are what we repeatedly do. Excellence, then, is not an act but a habit.",
+    category: "philosophical"
+  },
+  {
+    text: "Happiness depends upon ourselves.",
+    category: "philosophical"
+  },
+  {
+    text: "The only true wisdom is in knowing you know nothing.",
     category: "philosophical"
   }
 ];
@@ -57,7 +94,12 @@ const showRandomQuotes = () => {
         }
 
         const quoteValue = getQuotesByCategory(value);
-        const quoteText = quoteValue[1].text;
+        const quoteText = quoteValue[displayRandomQuote(quoteValue)].text;
+        console.log(quoteText)
+
+        function displayRandomQuote(arr) {
+         return (Math.floor(Math.random() * arr.length));
+        }
 
         quote.innerHTML = `<p>${quoteText}</p>`
 }

@@ -1,4 +1,4 @@
-const quotes = [
+let quotes = [
   // Humorous Quotes
   {
     text: "I told my wife she was drawing her eyebrows too high. She looked surprised.",
@@ -102,4 +102,17 @@ const showRandomQuotes = () => {
         }
 
         quote.innerHTML = `<p>${quoteText}</p>`
+}
+
+const addQuote = () => {
+  const newQuoteCategory = document.getElementById('newQuoteCategory').value;
+  const newQuoteText = document.getElementById('newQuoteText').value;
+  let text = `${newQuoteText}`;
+  let category = `${newQuoteCategory}`
+  let newQuoteObject = {text, category};
+
+  quotes.push(newQuoteObject)
+  
+  console.log(quotes)
+
 }

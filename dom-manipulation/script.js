@@ -1,4 +1,5 @@
-let quotes = [
+
+  let quotes = [
   // Humorous Quotes
   {
     text: "I told my wife she was drawing her eyebrows too high. She looked surprised.",
@@ -104,11 +105,23 @@ const showRandomQuotes = () => {
         quote.innerHTML = `<p>${quoteText}</p>`
 }
 
+const addQuoteBtn = document.getElementById('add-quote-btn')
+addQuoteBtn.addEventListener('click', () => {
+  addQuote()
+})
+
 const addQuote = () => {
-  const newQuoteCategory = document.getElementById('newQuoteCategory').value;
-  const newQuoteText = document.getElementById('newQuoteText').value;
+  const newQuoteCategoryInput = document.getElementById('newQuoteCategory');
+  const newQuoteTextInput = document.getElementById('newQuoteText');
+  const newQuoteCategory = newQuoteCategoryInput.value;
+  const newQuoteText = newQuoteTextInput.value;
   const qouteAdded = document.createElement("p");
   const quote = document.getElementById('quote');
+
+  if (!newQuoteText || !newQuoteCategory) {
+    alert('Please fill in both fields');
+    return;
+  }
 
   let text = `${newQuoteText}`
   let category = `${newQuoteCategory}`
@@ -119,6 +132,9 @@ const addQuote = () => {
   qouteAdded.innerHTML = newQuoteText;
 
   quote.appendChild(qouteAdded);
+
+  newQuoteCategoryInput.value = "";
+  newQuoteTextInput.value = "";
   console.log(quotes)
 }
 
@@ -131,5 +147,36 @@ createAddQuoteForm.addEventListener('click', function () {
     return addForm.style.display = "block"
   } else {
     return addForm.style.display = "none"
-  }
+  } 
+});
+ 
+const filter = document.getElementById('filter')
+filter.addEventListener('click', () => {
+    populateCategories()
 })
+
+function showCategoryList() {
+  const categoryList = document.getElementById('category-ls1')
+    if (categoryList.style.display === 'none') {
+      categoryList.style.display = 'block'
+    } else {
+      categoryList.style.display = 'none'
+    }
+}
+
+const populateCategories = () => {
+    showCategoryList()
+    const filter = document.getElementById('category-ls1');
+    const uniqueCategories1 = [...new Set(quotes.map(quote => quote.category))];
+    let optionsHTML = '<option value=""> All Categories</option>'
+    uniqueCategories1.forEach((category) => {
+        optionsHTML += `<option value="${category}">${category}</option>`
+    })
+    filter.innerHTML = optionsHTML; 
+    console.log(uniqueCategories1) 
+}  
+
+const filterQuotes = () => {
+
+}
+ 

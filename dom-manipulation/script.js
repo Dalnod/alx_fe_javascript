@@ -107,11 +107,18 @@ const showRandomQuotes = () => {
 const addQuote = () => {
   const newQuoteCategory = document.getElementById('newQuoteCategory').value;
   const newQuoteText = document.getElementById('newQuoteText').value;
-  let text = `${newQuoteText}`;
+  const qouteAdded = document.createElement("p");
+  const quote = document.getElementById('quote');
+
+  let text = `${newQuoteText}`
   let category = `${newQuoteCategory}`
   let newQuoteObject = {text, category};
 
   quotes.push(newQuoteObject)
+
+  qouteAdded.innerHTML = newQuoteText;
+
+  quote.appendChild(qouteAdded);
   console.log(quotes)
 }
 

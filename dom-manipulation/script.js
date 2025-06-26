@@ -115,17 +115,36 @@ function addQuote() {
     displayQuote(newQuote);
 }
 
-// Export quotes to JSON file
+// Export quotes to JSON file using Blob
 function exportQuotes() {
-    const dataStr = JSON.stringify(quotes, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportFileDefaultName = 'quotes.json';
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
-    linkElement.click();
+    try {
+        // Create JSON string with pretty formatting
+        const jsonString = JSON.stringify(quotes, null, 2);
+        
+        // Create a Blob with the JSON data
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        
+        // Create download link
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'quotes.json';
+        
+        // Trigger download
+        document.body.appendChild(a);
+        a.click();
+        
+        // Clean up
+        setTimeout(() => {
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }, 100);
+        
+        console.log('Quotes exported successfully');
+    } catch (error) {
+        console.error('Error exporting quotes:', error);
+        alert('Error exporting quotes. Please try again.');
+    }
 }
 
 // Import quotes from JSON file
@@ -187,6 +206,8 @@ function setupEventListeners() {
     });
 
     elements.importFile.addEventListener('change', importQuotes);
+
+    elements.exportBtn.addEventListener('click', exportQuotes);
 
     // Show category select by default
     elements.categorySelect.classList.remove('hidden');

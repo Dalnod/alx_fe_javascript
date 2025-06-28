@@ -61,7 +61,7 @@ function displayRandomQuote() {
 }
 
 // Display a quote from specific category
-function displayRandomQuoteByCategory(category) {
+function selectedCategory(category) {
     const categoryQuotes = quotes.filter(quote => quote.category === category);
     if (categoryQuotes.length === 0) {
         elements.quoteDisplay.innerHTML = `<p class="quote-text">No quotes in ${category} category</p>`;
@@ -191,7 +191,7 @@ function setupEventListeners() {
         if (elements.categorySelect.value === 'all') {
             displayRandomQuote();
         } else {
-            displayRandomQuoteByCategory(elements.categorySelect.value);
+            selectedCategory(elements.categorySelect.value);
         }
     });
 
@@ -205,7 +205,7 @@ function setupEventListeners() {
         if (elements.categorySelect.value === 'all') {
             displayRandomQuote();
         } else {
-            displayRandomQuoteByCategory(elements.categorySelect.value);
+            selectedCategory(elements.categorySelect.value);
         }
     });
 

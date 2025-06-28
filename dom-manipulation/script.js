@@ -95,7 +95,12 @@ function populateCategories() {
 
 function categoryFilter()  {
     
-}
+};
+
+function filterQuotes () {
+
+};
+
 
 // Add new quote
 function addQuote() {

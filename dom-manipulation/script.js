@@ -27,7 +27,7 @@ function init() {
     loadQuotes();
     setupEventListeners();
     displayRandomQuote();
-    populateCategorySelect();
+    populateCategories();
 }
 
 // Load quotes from localStorage
@@ -81,7 +81,7 @@ function displayQuote(quote) {
 }
 
 // Populate category select dropdown
-function populateCategorySelect() {
+function populateCategories() {
     elements.categorySelect.innerHTML = '<option value="all">All Categories</option>';
     const uniqueCategories = [...new Set(quotes.map(quote => quote.category))];
     
@@ -104,6 +104,7 @@ function addQuote() {
     }
 
     const newQuote = { text, category };
+    console.log(newQuote)
     quotes.push(newQuote);
     saveQuotes();
     
@@ -111,7 +112,7 @@ function addQuote() {
     elements.newQuoteText.value = '';
     elements.newQuoteCategory.value = '';
     elements.addQuoteForm.classList.add('hidden');
-    populateCategorySelect();
+    populateCategories();
     displayQuote(newQuote);
 }
 
@@ -162,7 +163,7 @@ function importQuotes(event) {
             
             quotes = importedQuotes;
             saveQuotes();
-            populateCategorySelect();
+            populateCategories();
             displayRandomQuote();
             alert(`Successfully imported ${importedQuotes.length} quotes`);
             

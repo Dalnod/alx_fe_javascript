@@ -507,5 +507,5 @@ function setupEventListeners() {
 document.addEventListener('DOMContentLoaded', init);
 
 function fetchQuotesFromServer(){
-    
+    method POST Content-Type headers
 }

@@ -509,3 +509,7 @@ document.addEventListener('DOMContentLoaded', init);
 function fetchQuotesFromServer(){
     method POST Content-Type headers
 }
+
+fucntion syncQuotes() {
+    
+}

@@ -505,3 +505,7 @@ function setupEventListeners() {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
+
+function fetchQuotesFromServer(){
+    
+}

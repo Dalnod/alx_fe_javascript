@@ -154,7 +154,7 @@ function addQuote() {
     displayQuote(newQuote);
     
     // Trigger sync after local changes
-    syncWithServer();
+    syncQuotes();
 }
 
 // Export quotes to JSON file using Blob
@@ -212,7 +212,7 @@ function importQuotes(event) {
             elements.importFile.value = '';
             
             // Sync after import
-            syncWithServer();
+            syncQuotes();
         } catch (error) {
             alert('Error importing quotes: ' + error.message);
         }
@@ -222,30 +222,24 @@ function importQuotes(event) {
 
 // ==================== Sync Functionality ====================
 
-// Initialize sync functionality
-function initSync() {
-    // Load last sync time
-    lastSyncTime = localStorage.getItem('lastSyncTime');
-    
-    // Set up periodic sync
-    syncIntervalId = setInterval(syncWithServer, SYNC_INTERVAL);
-    
-    // Also sync when window gains focus
-    window.addEventListener('focus', syncWithServer);
-    
-    // Initial sync
-    syncWithServer();
-}
-
-// Function to simulate server fetch
-async function fetchFromServer() {
+/**
+ * Fetch quotes from the server
+ */
+async function fetchQuotesFromServer() {
     try {
-        // In a real app, this would be your actual API endpoint
-        const response = await fetch(API_URL);
-        const serverData = await response.json();
-        
-        // Transform mock data to our quote format
-        return serverData.slice(0, 5).map((post, index) => ({
+        const response = await fetch(API_URL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        const serverQuotes = await response.json();
+        return serverQuotes.slice(0, 5).map(post => ({
             id: `server-${post.id}`,
             text: post.title,
             category: 'server',
@@ -254,54 +248,84 @@ async function fetchFromServer() {
             source: 'server'
         }));
     } catch (error) {
-        console.error('Error fetching from server:', error);
+        console.error('Failed to fetch quotes from server:', error);
         return null;
     }
 }
 
-// Function to sync with server
-async function syncWithServer() {
-    if (isSyncing) return;
-    
-    isSyncing = true;
-    updateSyncStatus('Syncing...');
-    
+/**
+ * Sync quotes with the server
+ */
+async function syncQuotes() {
     try {
-        const serverQuotes = await fetchFromServer();
+        // First fetch any updates from the server
+        const serverQuotes = await fetchQuotesFromServer();
+        
         if (!serverQuotes) {
-            updateSyncStatus('Sync failed', 'error');
-            return;
+            throw new Error('Failed to fetch quotes from server');
         }
-        
-        // Merge quotes with conflict resolution
+
+        // Prepare our quotes to send to server
+        const quotesToSync = quotes.map(quote => ({
+            id: quote.id,
+            title: quote.text,  // Using 'title' to match JSONPlaceholder structure
+            body: quote.category,  // Using 'body' to match JSONPlaceholder structure
+            userId: 1  // Required by JSONPlaceholder
+        }));
+
+        // Send our quotes to the server
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(quotesToSync)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        // Merge server quotes with our local quotes
         const mergedQuotes = mergeQuotes(quotes, serverQuotes);
-        const conflicts = detectConflicts(quotes, mergedQuotes);
+        quotes = mergedQuotes;
+        saveQuotes();
+
+        // Update last sync time
+        lastSyncTime = new Date().toISOString();
+        localStorage.setItem('lastSyncTime', lastSyncTime);
+
+        // Show success notification
+        showNotification('Quotes synced with server!', 'success');
         
-        // Update local quotes if no conflicts
-        if (conflicts.length === 0) {
-            quotes = mergedQuotes;
-            saveQuotes();
-            lastSyncTime = new Date().toISOString();
-            localStorage.setItem('lastSyncTime', lastSyncTime);
-            updateSyncStatus('Synced successfully', 'success');
-            
-            // Update UI if needed
-            if (elements.categorySelect.value === 'all') {
-                displayRandomQuote();
-            } else {
-                selectedCategory(elements.categorySelect.value);
-            }
+        // Refresh the display
+        if (elements.categorySelect.value === 'all') {
+            displayRandomQuote();
         } else {
-            // Show conflicts to user
-            showConflicts(conflicts);
-            updateSyncStatus('Conflicts detected', 'warning');
+            selectedCategory(elements.categorySelect.value);
         }
+
+        return true;
     } catch (error) {
         console.error('Sync failed:', error);
-        updateSyncStatus('Sync failed', 'error');
-    } finally {
-        isSyncing = false;
+        showNotification('Failed to sync with server', 'error');
+        return false;
     }
+}
+
+// Initialize sync functionality
+function initSync() {
+    // Load last sync time
+    lastSyncTime = localStorage.getItem('lastSyncTime');
+    
+    // Set up periodic sync
+    syncIntervalId = setInterval(syncQuotes, SYNC_INTERVAL);
+    
+    // Also sync when window gains focus
+    window.addEventListener('focus', syncQuotes);
+    
+    // Initial sync
+    syncQuotes();
 }
 
 // Merge quotes with conflict resolution
@@ -450,6 +474,23 @@ function updateSyncStatus(message, type = 'info') {
     }
 }
 
+/**
+ * Show a notification to the user
+ */
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Remove notification after 3 seconds
+    setTimeout(() => {
+        notification.classList.add('fade-out');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
 // Set up event listeners
 function setupEventListeners() {
     elements.newQuoteBtn.addEventListener('click', () => {
@@ -484,7 +525,7 @@ function setupEventListeners() {
 
     // Manual sync button
     if (elements.manualSyncBtn) {
-        elements.manualSyncBtn.addEventListener('click', syncWithServer);
+        elements.manualSyncBtn.addEventListener('click', syncQuotes);
     }
 
     // Conflict resolution buttons
@@ -505,11 +546,3 @@ function setupEventListeners() {
 
 // Initialize the app when DOM is loaded
 document.addEventListener('DOMContentLoaded', init);
-
-function fetchQuotesFromServer(){
-    method POST Content-Type headers
-}
-
-fucntion syncQuotes() {
-    
-}

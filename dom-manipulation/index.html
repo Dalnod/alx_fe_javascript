@@ -4,9 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
-    <title>Dynamic Quote Generator</title>
+    <title>Dynamic Quote Generator with Sync</title>
+</head>
 <body>
-    <h1>Dynamic Quote Generator</h1>
+    <div class="app-header">
+        <h1>Dynamic Quote Generator</h1>
+        <div>
+            <span id="syncStatus" class="sync-status info">Sync status: Loading...</span>
+            <p id="lastSyncTime" class="sync-time"></p>
+        </div>
+    </div>
     
     <div id="quoteDisplay">
         <p class="quote-text">Click "Show New Quote" to begin!</p>
@@ -15,11 +22,11 @@
     
     <div class="controls">
         <button id="newQuote">Show New Quote</button>
-        <select id="categorySelect" class="hidden">
+        <select id="categorySelect">
             <option value="all">All Categories</option>
         </select>
         <button id="toggleForm">Add New Quote</button>
-        <button id="exportBtn">Export Quotes</button>
+        <button id="manualSyncBtn">Sync Now</button>
     </div>
     
     <div id="addQuoteForm" class="form-container hidden">
@@ -28,9 +35,26 @@
         <button id="addQuoteBtn">Add Quote</button>
     </div>
     
-    <div class="import-export">
-        <input type="file" id="importFile" accept=".json" class="hidden">
+    <div class="controls">
+        <button id="exportBtn">Export Quotes</button>
         <button id="importBtn">Import Quotes</button>
+        <input type="file" id="importFile" accept=".json" class="hidden">
+    </div>
+
+    <!-- Conflict Resolution Modal -->
+    <div id="conflictModal" class="modal">
+        <div class="modal-content">
+            <h2>⚠️ Resolve Conflicts</h2>
+            <p>The following quotes were changed on the server while you were editing them locally.</p>
+            <p>Please choose which version to keep for each quote:</p>
+            
+            <ul id="conflictList"></ul>
+            
+            <div class="conflict-buttons">
+                <button id="useLocalBtn" class="secondary">Keep All Local</button>
+                <button id="useServerBtn">Keep All Server</button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
